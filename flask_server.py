@@ -72,6 +72,6 @@ def get_sentiment():
         results = {"sentiments_json": sentiments_df.to_json()}
 
     if get_topic_words:
-        results["top_topics"] = top_topics.to_json()
+        results["top_topics_json"] = top_topics.to_json()
 
     return json.dumps(results)
