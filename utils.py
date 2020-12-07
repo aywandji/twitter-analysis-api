@@ -16,8 +16,16 @@ from nltk.stem import WordNetLemmatizer
 import nltk
 
 
+class SentimentModelInputTypeError(Exception):
+    def __init__(self):
+        super(SentimentModelInputTypeError, self)
+
+
 def get_sentiment_model(model_name="distilbert-base-uncased-finetuned-sst-2-english",
                         cache_dir="transformers_models/"):
+    if not (isinstance(model_name, str) and isinstance(cache_dir, str)):
+        raise SentimentModelInputTypeError()
+
     tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir,
                                               local_files_only=False)
     model = TFAutoModelForSequenceClassification.from_pretrained(model_name, cache_dir=cache_dir,
@@ -61,7 +69,7 @@ def get_tweets(query_string, days_offsets, tweet_fields,
     tweets = []
     remaining_number_of_tweets = 0
 
-    # request tweets for each day offset.
+    # generate query and request tweets for each day offset.
     for i, day_offset in enumerate(days_offsets):
         max_tweets = max_nb_tweets_per_day + remaining_number_of_tweets
         if i == len(days_offsets) - 1:
@@ -77,11 +85,11 @@ def get_tweets(query_string, days_offsets, tweet_fields,
     return tweets
 
 
-def get_sentiment_df(sentiment_model_output_tensors, labels_dict):
-    """generate sentiment probabilities from sentiment_model_output_tensors using softmax function.
+def get_sentiment_df(sentiment_model_output_logits, labels_dict):
+    """generate sentiment probabilities from sentiment_model_output_logits using softmax function.
 
     Args:
-        sentiment_model_output_tensors (output_class): Output generates from model inference
+        sentiment_model_output_logits (output_class): Output logits generated from model inference
         labels_dict (dict): dictionaary of sentiment index to label)
 
     Returns:
@@ -90,7 +98,7 @@ def get_sentiment_df(sentiment_model_output_tensors, labels_dict):
     """
     sentiment_dict = {}
     outputs_proba = tf.keras.activations.softmax(
-        sentiment_model_output_tensors.logits)
+        sentiment_model_output_logits)
     for idx, s_name in labels_dict.items():
         sentiment_dict[s_name] = outputs_proba[:, idx].numpy()
 
@@ -101,7 +109,7 @@ def tokenize_and_predict_sentiment(input_texts, tokenizer, model):
     encodings = tokenizer(input_texts, padding=True, return_tensors="tf")
     sentiment_model_output_tensors = model(encodings)
 
-    return get_sentiment_df(sentiment_model_output_tensors, model.config.id2label)
+    return get_sentiment_df(sentiment_model_output_tensors.logits, model.config.id2label)
 
 
 def de_emojify(text):
