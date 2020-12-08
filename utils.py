@@ -74,11 +74,9 @@ def get_tweets(query_string, days_offsets, tweet_fields,
         max_tweets = max_nb_tweets_per_day + remaining_number_of_tweets
         if i == len(days_offsets) - 1:
             max_tweets = total_nb_tweets - len(tweets)
-
         query = get_query(query_string, day_offset, day_offset + 1, tweet_fields, nb_tweets=10)
         collected_tweets = collect_results(
             query, max_tweets=max_tweets, result_stream_args=search_tweets_args)[:-1]
-
         tweets.extend(collected_tweets)
         remaining_number_of_tweets = max_tweets - len(collected_tweets)
 
@@ -123,7 +121,6 @@ def de_emojify(text):
     #     u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
     #                        "]+", flags = re.UNICODE)
     # return regrex_pattern.sub(r'',text)
-
     return re.sub(r'[^\x00-\x7F]+', ' ', text)
 
 
@@ -228,7 +225,6 @@ def get_topics_from_tweets(nltk_data_path, cleaned_tweets_texts,
     top_topics_words = []
     top_topics_proba = []
     top_topics_indexes = []
-
     for i, topic in enumerate(top_topics):
         topic_words = [w_tuple[1] for w_tuple in topic[0]]
         topic_proba = [w_tuple[0] for w_tuple in topic[0]]
