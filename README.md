@@ -39,16 +39,16 @@ Below are some vizualisations of the results (from vizualisation_app.ipynb) you 
 ![sentiment over the last week](images/covid19_sentiment.png)
 ![Topic over the last week](images/covid19_cloud.png)
 
-## FLASK API paramters
+## FLASK API parameters
 Here is a list of paramters you can use to query the API
 - hashtag : the hastag you want to analyse (examples : trump, blm, covid,..)
 - nb_days : The number of days before current day from which you want to request tweets
 - nb_tweets : The total nulber of tweets you want to request for your analysis (the more the better)
-- get_topic_words : If True, the topics will be retrieved from your tweets
+- get_topic_words : "0"(False) or "1" (True). If "1", the topics will be retrieved from your tweets
 - n_topics : The number of topics you want to extract
 - n_words_per_topic : The number of words per topic you want to have.
 - lda_passes : Number of passes for LDA model (a value between 2 and 5 is ok)
-- return_tweets : If true, the list of tweets will be returned along with the sentiment.
+- return_tweets : "0"(False) or "1" (True). If "1", the list of tweets will be returned along with the sentiment.
 - language : language of your requested tweets. Current default value is "en" for english. If you want to analyse another language, you need to add a sentiment model supporting your language.
 
 ## Run the Code
@@ -64,6 +64,7 @@ Here is a list of paramters you can use to query the API
 - gensim
 - nltk
 - tensorflow
+- Pytest (to run unit tests inside test_utils.py)
 
 ### Steps
 - Create a developer account for twitter api access (https://developer.twitter.com/en/apply-for-access) and add your BEARER TOKEN in twitter_keys.yaml file.
@@ -73,6 +74,7 @@ Here is a list of paramters you can use to query the API
 ## Improve the API
 There are many ways this basic API can be improve to get better results:
 - Using only the hastag to query tweets is not enough. There are many other ways to accurately fetch tweets. For example you can add keywords, location and so on. See Twitter API official doc.
+- Increase the number of tweets you are using for analysis. For above examples we fetched only 70 tweets per hashtag. To get a finer analysis, one should query more than that. 
 - Use a better sentiment model. As example here, we are using a huggingface transformer named "distilbert-base-uncased-finetuned-sst-2-english". It has been finetuned on SST2 dataset (movies reviews) so it is not accurate for tweets. You can finetune your own model using for example this dataset for tweets sentiment analysis: https://www.kaggle.com/kazanova/sentiment140
 - Improve topic modelling method. LDA model is a good way to do it but there are many other ways for this.
 - Try different tweets cleaning processes. In fact tweets are very noisy and thus this step is quite critical.

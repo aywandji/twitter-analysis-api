@@ -22,6 +22,12 @@ model, tokenizer = get_sentiment_model(cache_dir=CACHE_DIR)
 def hello_world():
     return 'Welcome to your Flask API'
 
+# @app.route('/test_params')
+# def hello_test():
+#     hashtag = request.args.get('hashtag', '')
+#     nb_days = request.args.get('nb_days', 7,type=int)
+#     get_topic_words = bool(int(request.args.get('get_topic_words', "0")))
+#     return json.dumps({'hashtag':hashtag,'nb_days':nb_days,'get_topic_words':get_topic_words})
 
 @app.route('/sentiment')
 def get_sentiment():
@@ -35,14 +41,14 @@ def get_sentiment():
     hashtag = request.args.get('hashtag', '')
     if hashtag == "":
         return "Please specify a non null hashtag"
-    nb_days = request.args.get('nb_days', 7)
+    nb_days = request.args.get('nb_days', 7,type=int)
     nb_days = int(min(max(nb_days, 1), 7))
-    nb_tweets = max(request.args.get('nb_tweets', nb_days * 10), nb_days)
-    get_topic_words = request.args.get('get_topic_words', False)
-    n_topics = request.args.get('n_topics', 1)
-    n_words_per_topic = request.args.get('n_words_per_topic', 10)
-    lda_passes = request.args.get('lda_passes', 4)
-    return_tweets = request.args.get('return_tweets', False)
+    nb_tweets = max(request.args.get('nb_tweets', nb_days * 10), nb_days,type=int)
+    get_topic_words = bool(int(request.args.get('get_topic_words',"1")))
+    n_topics = request.args.get('n_topics', 1,type=int)
+    n_words_per_topic = request.args.get('n_words_per_topic', 10,type=int)
+    lda_passes = request.args.get('lda_passes', 4,type=int)
+    return_tweets = bool(int(request.args.get('return_tweets', "0")))
     language = request.args.get('language', "en")
 
     # TWITTER REQUEST PARAMETERS
